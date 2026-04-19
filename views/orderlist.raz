@@ -1,0 +1,149 @@
+@{
+    Model.title = "Orders";
+    var orders = Model.orders;
+}
+@section nav {
+    Html.partial("_nav", {authenticated:true})
+}
+
+<style>
+    /* --- 1. MODERN TOOLBAR --- */
+    .toolbar-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 20px;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* --- 2. TABLE STYLING --- */
+    .tbl {
+        width: 100%;
+        border-collapse: separate; 
+        border-spacing: 0; 
+    }
+
+    .tbl th {
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        color: #94a3b8; /* Muted header text */
+        font-weight: 600;
+        padding: 15px 20px;
+        border-bottom: 2px solid #f1f5f9;
+        text-align: left;
+    }
+
+    .tbl td {
+        padding: 18px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+        color: #334155;
+        transition: background-color 0.2s;
+        font-size: 0.95rem;
+    }
+
+    .tbl tbody tr:hover td {
+        background-color: #f8fafc; 
+    }
+
+    .tbl tbody tr:last-child td { border-bottom: none; }
+
+    /* --- 3. BADGES & DATA STYLING --- */
+    
+    /* User ID (Tech Look) */
+    .user-id-badge {
+        font-family: 'Consolas', 'Monaco', monospace;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Price Styling */
+    .amount-text {
+        font-weight: 700;
+        color: var(--secondary-color);
+        font-size: 1rem;
+    }
+
+    /* Status Badge */
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: capitalize;
+        display: inline-block;
+        background-color: #fff7ed; /* Default Light Orange */
+        color: #c2410c;             /* Default Dark Orange */
+        border: 1px solid #ffedd5;
+    }
+
+    /* Date Styling */
+    .date-text {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div style="max-width: 1200px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);">
+
+    <div class="toolbar-container">
+        <h2 class="page-title" style="margin:0; font-size:1.5rem; font-weight:700; color:var(--secondary-color); display: flex; align-items: center; gap: 10px;">
+            <i class="bi bi-receipt" style="color: var(--primary-color);"></i> Order History
+        </h2>
+        
+        <div style="background: #eff6ff; color: var(--primary-color); padding: 5px 15px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;">
+            Total Orders: @orders.length
+        </div>
+    </div>
+
+    <table class="tbl">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Order Date</th>
+                <th>Delivery Address</th>
+                <th>Order Value</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(var i=0; i<orders.length; i++){
+            <tr>
+                <td>
+                    <span class="user-id-badge">@orders[i].userid</span>
+                </td>
+                
+                <td>
+                    <div class="date-text">
+                        <i class="bi bi-calendar3" style="margin-right: 5px;"></i>
+                        @orders[i].date
+                    </div>
+                </td>
+                
+                <td style="max-width: 300px;">
+                    <div style="line-height: 1.4;">
+                        @orders[i].address
+                    </div>
+                </td>
+                
+                <td>
+                    <span class="amount-text">৳ @orders[i].amount</span>
+                </td>
+                
+                <td>
+                    <span class="status-badge">
+                        @orders[i].status
+                    </span>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+</div>

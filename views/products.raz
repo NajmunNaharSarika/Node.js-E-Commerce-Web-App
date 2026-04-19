@@ -1,0 +1,256 @@
+@{
+     Model.title="Product management";
+     var products = Model.products;
+}
+@section nav {
+    Html.partial("_nav", {authenticated:true})
+}
+
+<style>
+    /* --- 1. MODERN TOOLBAR --- */
+    .toolbar-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 20px;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #f1f5f9; 
+    }
+
+    .view-controls {
+        display: flex;
+        background: #f1f5f9; 
+        padding: 4px;
+        border-radius: 8px;
+        gap: 0;
+        margin-left: 20px;
+    }
+    
+    .view-btn {
+        padding: 6px 14px;
+        border: none;
+        background: transparent;
+        border-radius: 6px;
+        cursor: pointer;
+        color: #64748b;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+    
+    .view-btn.active {
+        background-color: white;
+        color: var(--primary-color);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+        font-weight: 600;
+    }
+
+    /* --- 2. TABLE STYLING --- */
+    .tbl {
+        width: 100%;
+        border-collapse: separate; 
+        border-spacing: 0; 
+    }
+
+    .tbl th {
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        color: #94a3b8; 
+        font-weight: 600;
+        padding: 15px 20px;
+        border-bottom: 2px solid #f1f5f9;
+        text-align: left;
+    }
+
+    .tbl td {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+        color: #334155;
+        transition: background-color 0.2s;
+    }
+
+    .tbl tbody tr:hover td {
+        background-color: #f8fafc; 
+    }
+
+    .tbl tbody tr:last-child td { border-bottom: none; }
+
+    .price-tag {
+        background-color: #eff6ff;
+        color: var(--primary-color);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-block;
+    }
+
+    /* --- 3. GRID MODE TRANSFORMATIONS --- */
+    .tbl.grid-mode { border: none; background: transparent; }
+    .tbl.grid-mode thead { display: none; }
+    .tbl.grid-mode tbody { display: flex; flex-wrap: wrap; gap: 25px; justify-content: flex-start; }
+    
+    .tbl.grid-mode tr {
+        display: flex;
+        flex-direction: column;
+        width: 230px; 
+        background: #fff;
+        border: 1px solid #f1f5f9;
+        border-radius: 16px; 
+        padding: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        align-items: center;
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s; 
+    }
+
+    .tbl.grid-mode tr:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px -3px rgba(0,0,0,0.1);
+        border-color: #e2e8f0;
+    }
+
+    .tbl.grid-mode td { display: block; border: none; padding: 5px 0; width: 100%; background: transparent !important; }
+    
+    .tbl.grid-mode td img {
+        width: 140px !important;
+        height: 140px !important;
+        margin-bottom: 15px;
+        object-fit: contain;
+    }
+
+    .tbl.grid-mode td:nth-child(4) {
+        font-size: 0.85rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: #94a3b8;
+        margin-top: 10px;
+    }
+</style>
+
+<div style="max-width: 1100px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);">
+
+    <div class="toolbar-container">
+        <div style="display: flex; align-items: center;">
+            <h2 class="page-title" style="margin:0; font-size:1.5rem; font-weight:700; color:var(--secondary-color);">Products</h2>
+            
+            <div class="view-controls">
+                <button class="view-btn" id="btnList" title="List View"><i class="bi bi-list-ul"></i></button>
+                <button class="view-btn active" id="btnGrid" title="Grid View"><i class="bi bi-grid-fill"></i></button>
+            </div>
+        </div>
+
+        <a href="/create-product" class="btn primary" style="padding: 0.5rem 1rem; font-size: 0.9rem; border-radius: 8px; display: flex;margin:12px; align-items: center; gap: 8px; font-weight: 500; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);">
+            <i class="bi bi-plus-lg" style="font-weight: 900;"></i> Add Product
+        </a>
+    </div>
+
+    <table class="tbl" id="productTable">
+        <thead>
+            <tr>
+                <th style="width: 100px; text-align: center;">Preview</th>
+                <th>Product Name</th>
+                <th style="width: 150px;">Price</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody id="productBody">
+        @for(var i=0; i<products.length; i++){
+            <tr id="row-@products[i]._id">
+                <td style="text-align: center;">
+                    <img class="circle-image" 
+                         src="/images/@products[i].picture" 
+                         style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px; border: 1px solid #f1f5f9;" />
+                </td>
+                
+                <td style="font-weight: 600; font-size: 1.05rem;">@products[i].name</td>
+                
+                <td>
+                    <span class="price-tag">৳ @products[i].price</span>
+                </td>
+                
+                <td style="color: #64748b; font-size: 0.95em;">@products[i].description</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+</div>
+
+@section Scripts {
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/scripts/snackbar/js-snackbar.min.css" />
+    <script src="/scripts/jquery.js"></script>
+    <script src="/scripts/snackbar/js-snackbar.js"></script>
+
+    <script>
+        $(()=>{
+            const socket = io();
+            const table = $('#productTable');
+            const tbody = $('#productBody');
+
+            // --- 1. SOCKET LISTENER (Real-Time Update & Scroll) ---
+            socket.on('new_product_added', function(p){
+                // 1. Create HTML Row with ID
+                let newRow = `
+                    <tr id="row-${p._id}" style="transition: background-color 1.5s ease;">
+                        <td style="text-align: center;">
+                            <img class="circle-image" src="/images/${p.picture}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px; border: 1px solid #f1f5f9;" />
+                        </td>
+                        <td style="font-weight: 600; font-size: 1.05rem;">${p.name}</td>
+                        <td>
+                            <span class="price-tag">৳ ${p.price}</span>
+                        </td>
+                        <td style="color: #64748b; font-size: 0.95em;">${p.description}</td>
+                    </tr>
+                `;
+
+                // 2. Append to Table
+                tbody.append(newRow);
+
+                // 3. Auto Scroll & Highlight
+                setTimeout(() => {
+                    const newItem = document.getElementById(`row-${p._id}`);
+                    if(newItem) {
+                        newItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        newItem.style.backgroundColor = '#dcfce7'; 
+                        setTimeout(() => { newItem.style.backgroundColor = ''; }, 2000);
+                    }
+                }, 100);
+
+                // Notify (Since there is no modal, we always notify)
+                SnackBar({ message: "New product added to store!", position: "br", status: "info" });
+            });
+
+            // --- 2. VIEW MODE LOGIC ---
+            const btnList = $('#btnList');
+            const btnGrid = $('#btnGrid');
+
+            function setGrid() {
+                table.addClass('grid-mode');
+                btnGrid.addClass('active');
+                btnList.removeClass('active');
+                localStorage.setItem('adminView', 'grid');
+            }
+
+            function setList() {
+                table.removeClass('grid-mode');
+                btnList.addClass('active');
+                btnGrid.removeClass('active');
+                localStorage.setItem('adminView', 'list');
+            }
+
+            btnGrid.click(setGrid);
+            btnList.click(setList);
+
+            if(localStorage.getItem('adminView') === 'grid'){
+                setGrid();
+            } else {
+                setList();
+            }
+        });
+    </script>
+}

@@ -1,0 +1,233 @@
+@{
+     Model.title="Create product";
+     const categories = Model.categories;
+}
+@section nav {
+    Html.partial("_nav", {authenticated:true})
+}
+
+<style>
+    /* Card Container */
+    .form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Header */
+    h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Form Fields */
+    .fld {
+        margin-bottom: 25px; /* Increased spacing */
+    }
+
+    label {
+        display: block;
+        font-weight: 700; /* Bolder */
+        color: #334155;   /* Darker Slate */
+        margin-bottom: 10px;
+        font-size: 1rem;  /* Larger Font Size */
+    }
+
+    /* Inputs & Selects */
+    .ctrl, .ctrl-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: #1e293b;
+        background-color: #f8fafc;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        box-sizing: border-box; /* Crucial for symmetry */
+    }
+
+    .ctrl:focus, .ctrl-select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background-color: #ffffff;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Side-by-Side Grid for Dropdowns */
+    .grid-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Symmetrical 50/50 split */
+        gap: 30px; /* Space between them */
+    }
+
+    /* File Input Styling */
+    input[type="file"].ctrl {
+        padding: 10px;
+        background-color: white;
+    }
+
+    /* Checkbox Styling */
+    .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 15px 20px;
+        background-color: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 8px;
+        cursor: pointer;
+        width: fit-content;
+        transition: transform 0.1s;
+    }
+    
+    .checkbox-wrapper:active {
+        transform: scale(0.98);
+    }
+    
+    .checkbox-wrapper input {
+        width: 20px;
+        height: 20px;
+        accent-color: #16a34a;
+        cursor: pointer;
+    }
+
+    .checkbox-text {
+        font-weight: 700;
+        color: #166534;
+        font-size: 1rem;
+    }
+
+    /* Button Styling */
+    .btn-save {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 14px 35px;
+        border-radius: 8px;
+        border: none;
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.1s, box-shadow 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-save:hover {
+        background-color: var(--primary-hover);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        transform: translateY(-2px);
+    }
+
+    /* Responsive Grid (Using @@ to escape Razor) */
+    @@media (max-width: 650px) {
+        .grid-row { 
+            grid-template-columns: 1fr; 
+            gap: 20px;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <h1><i class="bi bi-box-seam-fill" style="color: var(--primary-color);"></i> Add New Product</h1>
+    
+    <form enctype="multipart/form-data" method="post" action="/save-product">
+        
+        <div class="fld">
+            <label>Product Name</label>
+            <input type="text" name="name" class="ctrl"  required />
+        </div>
+        
+        <div class="fld">
+            <label>Price (BDT)</label>
+            <input type="number" name="price" class="ctrl"  required />
+        </div>
+        
+        <div class="fld">
+            <label>Description</label>
+            <textarea name="description" class="ctrl" style="min-height: 120px; resize: vertical;" placeholder="Product details..."></textarea>
+        </div>
+        
+        <div class="fld">
+            <label>Product Image</label>
+            <input type="file" name="picture" class="ctrl" required />
+        </div>
+        
+        <div class="grid-row">
+            <div class="fld">
+                <label>Category</label>
+                <select name="categoryid" id="categoryid" class="ctrl-select" required>
+                    <option value="" selected>Select one</option>
+                    @for(var i=0;i<categories.length;i++){
+                        <option value="@categories[i]._id">@categories[i].categoryname</option>
+                    }
+                </select>
+            </div>
+            
+            <div class="fld">
+                <label>SubCategory</label>
+                <select name="subcategoryid" id="subcategoryid" class="ctrl-select" required>
+                    <option value="" selected>Select one</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="fld">
+            <label class="checkbox-wrapper">
+                <input type="checkbox" name="featured" checked /> 
+                <span class="checkbox-text">Mark as Featured Product</span>
+            </label>
+        </div>
+        
+        <div class="fld" style="text-align: right; margin-top: 30px;">
+            <button type="submit" class="btn-save">
+                <i class="bi bi-check2-circle"></i> Save Product
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="/scripts/jquery.js"></script>
+    <script>
+        $(()=>{
+           $("#categoryid").change(function(){
+                let cid = $(this).val();
+                
+                // UX: Show loading state
+                $("#subcategoryid").html('<option value="">Loading...</option>');
+
+                $.ajax({
+                    method: 'get',
+                    url: 'get-sub-categories?cid='+cid,
+                    dataType:'json',
+                    success: r=>{
+                       if(r.length){
+                           console.log(r)
+                           $("#subcategoryid").html("");
+                           // Reset default option
+                           $("#subcategoryid").append(`<option value="" selected>Select one</option>`);
+                           
+                           for(var i=0;i<r.length;i++){
+                               $("#subcategoryid").append(`<option value='${r[i].id}'>${r[i].subcategoryname}</option>`)
+                           }
+                       } else {
+                           $("#subcategoryid").html('<option value="">No subcategories found</option>');
+                       }
+                    }
+                })
+            });
+        });
+    </script>
+}

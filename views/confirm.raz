@@ -1,0 +1,23 @@
+@{
+    Model.title = "Order Confirm";
+}
+@section nav {
+    Html.partial("_nav", {authenticated:true})
+}
+
+<div style="width: 95%; min-height: 80vh; margin: 0 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-family: sans-serif;">
+    
+    <h1 style="margin: 0 0 1rem 0; color: #333;">Thank you, for Ordering with Us!</h1>
+    
+    <p style="font-size: 1.1rem; color: #666; margin: 0;">
+        Your Product Will Be Delivered Soon!
+    </p>
+
+    <a href="/" 
+       style="margin-top: 25px; background-color: #007bff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; transition: 0.3s;"
+       onmouseover="this.style.backgroundColor='#0056b3'; this.style.transform='translateY(-2px)'"
+       onmouseout="this.style.backgroundColor='#007bff'; this.style.transform='translateY(0)'">
+        Continue Shopping &rarr;
+    </a>
+
+</div>

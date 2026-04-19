@@ -1,0 +1,299 @@
+@{
+    Model.title = "Home";
+    const categories = Model.categories;
+    const products = Model.products;
+}
+@section nav {
+    Html.partial("_nav", {authenticated:Model.authenticated})
+}
+
+<style>
+    .text-truncate-multiline {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 4.5em; 
+        margin-bottom: 10px;
+        line-height: 1.5em;
+    }
+    .card-img-top {
+        width: 100%;
+        height: 220px;       
+        object-fit: contain; 
+        background-color: #fff; 
+        padding: 15px;       
+        border-bottom: 1px solid #f1f5f9;
+        border-radius: 12px 12px 0 0;
+    }
+    .card { height: 100%; }
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 1.25rem;
+    }
+    .mt-auto { margin-top: auto; }
+</style>
+
+<div class="container">
+    <div class="banner">
+        <div class="banner-text">
+        <h2>Legacy of Luxury</h2>
+        <h1>WEAR THE POWER OF ROYALTY</h1>
+    <div style="background: rgba(228, 225, 71, 0.2); padding: 5px 15px; border-radius: 20px; display: inline-block; backdrop-filter: blur(5px);">
+       <i class="bi bi-stars"></i> Timeless Gold. Enternal Elegance
+    </div>
+    </div>
+    </div>
+</div>
+
+<div class="col-1-3">
+    <div>
+        <div class="sidenav">
+            <div class="sidenav-header">
+                <i class="bi bi-grid-fill"></i> Categories
+            </div>
+            <ul>
+                @for(var i=0; i<categories.length;i++){
+                    <li>
+                        <span class="link-icon" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 500;">@categories[i].categoryname</span> 
+                            <span>
+                                <i class="r bi bi-chevron-right" style="font-size: 0.8rem;"></i>
+                                <i class="d bi bi-chevron-down" style="display: none; font-size: 0.8rem;"></i>
+                            </span>
+                            </span>
+                        <ul style="display: none; background-color: #f8fafc;">
+                            @for(var j=0; j<categories[i].subcategories.length;j++){
+                                <li>
+                                    <a href="/?c=@categories[i]._id&s=@categories[i].subcategories[j]._id" style="font-size: 0.9rem;">
+                                        @categories[i].subcategories[j].subcategoryname
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div>
+        <div class="between" style="margin-bottom: 10px; align-items: center;">
+             <div style="display:flex; gap: 10px;">
+                @if(Model.authenticated && Model.role=="admin"){
+                    <a href="/admin" class="btn primary" style="padding: 5px 15px; font-size: 0.9rem;">
+                        <i class="bi bi-speedometer2"></i> Admin Panel
+                    </a>
+                    
+                    <button id="openModalBtn" class="btn primary" style="padding: 5px 15px; font-size: 0.9rem; background-color: var(--success-color);">
+                        <i class="bi bi-plus-lg"></i> Quick Add
+                    </button>
+                }
+             </div>
+
+        </div>
+       
+        <div class="product-box" id="productContainer">
+            @for(var i=0; i<products.length;i++){
+                <div class="card">
+                    <img class="card-img-top" src="/images/@products[i].picture" alt="@products[i].name" />
+                    <div class="card-body">
+                        <div class="card-content-wrapper">
+                            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #1e293b;">
+                                @products[i].name
+                            </h3>
+                            <div class="card-text" style="padding: 0; margin-bottom: 0.5rem;">
+                                <p class="text-truncate-multiline" title="@products[i].description">
+                                    @products[i].description
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card-action-wrapper mt-auto">
+                            <div style="margin-bottom: 10px;">
+                                <span style="font-size: 1.2rem; font-weight: 700; color: #2563eb;">
+                                    ৳ @products[i].price
+                                </span>
+                            </div>
+                            <button data-pid="@products[i]._id" class="cart-btn">
+                                <i class="bi bi-cart-plus"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>    
+    </div>
+</div>
+
+<style>
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 2000;
+        display: none; justify-content: center; align-items: center;
+    }
+    .modal-box {
+        background: white; padding: 30px; border-radius: 12px;
+        width: 500px; max-width: 90%;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+</style>
+
+<div class="modal-overlay" id="addModal">
+    <div class="modal-box">
+        <h2 style="margin-bottom: 20px; color: var(--secondary-color);">Add New Product</h2>
+        <form id="ajaxForm" enctype="multipart/form-data">
+            <div class="fld">
+                <input type="text" name="name" placeholder="Product Name" class="ctrl" required />
+            </div>
+            <div class="fld">
+                <input type="number" name="price" placeholder="Price" class="ctrl" required />
+            </div>
+            <div class="fld">
+                <textarea name="description" placeholder="Description" class="ctrl" required></textarea>
+            </div>
+            <div class="fld">
+                 <input type="text" name="categoryid" placeholder="Category ID" class="ctrl" required />
+            </div>
+            <div class="fld">
+                 <input type="text" name="subcategoryid" placeholder="SubCat ID" class="ctrl" required />
+            </div>
+            <div class="fld">
+                <input type="file" name="picture" class="ctrl" required />
+            </div>
+
+            <div class="between" style="margin-top: 20px;">
+                <button type="button" id="closeModalBtn" class="small-btn">Cancel</button>
+                <button type="submit" class="btn primary">Save Product</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/scripts/snackbar/js-snackbar.min.css" />
+    <script src="/scripts/jquery.js"></script>
+    <script src="/scripts/snackbar/js-snackbar.js"></script>
+
+    <script>
+        $(()=>{
+            const socket = io();
+
+            socket.on('new_product_added', function(p){
+                console.log("New product received via Socket!", p);
+
+                let newCard = `
+                    <div class="card">
+                        <img class="card-img-top" src="/images/${p.picture}" alt="${p.name}" />
+                        <div class="card-body">
+                            <div class="card-content-wrapper">
+                                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #1e293b;">
+                                    ${p.name}
+                                </h3>
+                                <div class="card-text" style="padding: 0; margin-bottom: 0.5rem;">
+                                    <p class="text-truncate-multiline" title="${p.description}">
+                                        ${p.description}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="card-action-wrapper mt-auto">
+                                <div style="margin-bottom: 10px;">
+                                    <span style="font-size: 1.2rem; font-weight: 700; color: #2563eb;">
+                                        ৳ ${p.price}
+                                    </span>
+                                </div>
+                                <button data-pid="${p._id}" class="cart-btn">
+                                    <i class="bi bi-cart-plus"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                $('#productContainer').append(newCard);
+                
+                if ($('#addModal').css('display') === 'none') {
+                    SnackBar({ message: "New item just added to store!", position: "br", status: "info" });
+                }
+            });
+
+            const container = $('#productContainer');
+            const btnGrid = $('#btnGrid');
+            const btnList = $('#btnList');
+
+            function setGrid() {
+                container.removeClass('list-view');
+                btnGrid.addClass('active');
+                btnList.removeClass('active');
+                localStorage.setItem('viewMode', 'grid');
+            }
+            
+            function setList() {
+                container.addClass('list-view');
+                btnList.addClass('active');
+                btnGrid.removeClass('active');
+                localStorage.setItem('viewMode', 'list');
+            }
+
+            btnGrid.click(setGrid);
+            btnList.click(setList);
+            if(localStorage.getItem('viewMode') === 'list') setList();
+
+            $('.link-icon').click(function(){
+                let self = $(this);
+                self.find('.d').toggle();
+                self.find('.r').toggle();
+                self.next().slideToggle(200);
+            });
+
+            $(document).on('click', '.cart-btn', function(){
+                let btn = $(this);
+                let originalText = btn.html();
+                let id= btn.data('pid');
+                
+                btn.html('<i class="bi bi-check"></i> Added');
+                setTimeout(() => btn.html(originalText), 2000);
+
+                $.ajax({
+                    method: 'get',
+                    url: '/addcart?id='+id,
+                    dataType:'json',
+                    success: r=>{
+                        SnackBar({ message: r.msg, position: "br", status: "success" })
+                    }
+                })
+            });
+
+            $('#openModalBtn').click(() => $('#addModal').css('display', 'flex'));
+            $('#closeModalBtn').click(() => $('#addModal').hide());
+
+            $('#ajaxForm').submit(function(e){
+                e.preventDefault(); 
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: '/create-product', 
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if(response.success) {
+                            $('#addModal').hide();
+                            $('#ajaxForm')[0].reset();
+                            SnackBar({ message: "Product added successfully!", position: "br", status: "success" });
+                        } else {
+                            alert('Error: ' + response.msg);
+                        }
+                    },
+                    error: function(err) {
+                        alert('System Error');
+                    }
+                });
+            });
+        });
+    </script>
+}

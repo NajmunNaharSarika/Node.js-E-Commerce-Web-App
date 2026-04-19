@@ -1,0 +1,122 @@
+@{
+    Model.title = "Register";
+}
+@section nav {
+    Html.partial("_nav", {authenticated: Model.authenticated})
+}
+
+<style>
+    .login-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh; 
+        padding: 20px;
+    }
+
+    .login-card {
+        background: #ffffff;
+        width: 100%;
+        max-width: 400px;
+        padding: 40px 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .login-header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 10px;
+    }
+
+    .login-header p {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 30px;
+    }
+
+    .fld {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+    .fld label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 8px;
+    }
+
+    .ctrl {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background-color: #f8fafc;
+    }
+
+    .ctrl:focus {
+        border-color: var(--primary-color);
+        background-color: #fff;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        outline: none;
+    }
+
+    .btn-block {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        margin-top: 10px;
+        transition: transform 0.1s;
+    }
+    
+    .btn-block:active {
+        transform: scale(0.98);
+    }
+</style>
+
+<div class="login-wrapper">
+    <div class="login-card">
+        
+        <div class="login-header">
+            <i class="bi bi-person-plus-fill" style="font-size: 3rem; color: var(--primary-color);"></i>
+            <h1>Create Account</h1>
+            <p>Join us today! It takes less than a minute.</p>
+        </div>
+
+        @if(Model.msg && Model.msg.length > 0){
+            <div style="color: red; margin-bottom: 20px; text-align: center;">
+                @Model.msg
+            </div>
+        }
+
+        <form method="post" action="/register">
+            <div class="fld">
+                <label>Username</label>
+                <input type="text" name="uname" class="ctrl" placeholder="Choose a username" required />
+            </div>
+            
+            <div class="fld">
+                <label>Password</label>
+                <input type="password" name="pass" class="ctrl" placeholder="Create a password" required />
+            </div>
+            
+            <div class="fld" style="margin-top: 30px;">
+                <button type="submit" class="btn primary btn-block">
+                    Sign Up <i class="bi bi-arrow-right-short"></i>
+                </button>
+            </div>
+        </form>
+
+        <div style="margin-top: 20px; font-size: 0.9rem; color: #64748b;">
+            Already have an account? <a href="/login" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Log in</a>
+        </div>
+    </div>
+</div>

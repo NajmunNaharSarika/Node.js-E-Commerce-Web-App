@@ -1,0 +1,46 @@
+@{
+    Model.title = "Admin Dashboard";
+}
+@section nav {
+    Html.partial("_nav", {authenticated:true})
+}
+
+<div style="max-width: 1000px; margin: 50px auto; padding: 0 20px;">
+    
+    <div style="margin-bottom: 40px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px;">
+        <h1 style="color: var(--secondary-color); font-weight: 800; font-size: 2rem; display: flex; align-items: center; gap: 12px;">
+            <i class="bi bi-speedometer2" style="color: var(--primary-color);"></i> Admin Panel
+        </h1>
+        <p style="color: var(--text-muted); margin-top: 5px; font-size: 1.1rem;">
+            Welcome back. Manage your store's inventory and orders from here.
+        </p>
+    </div>
+
+    <div class="box-container">
+        
+        <a class="big-box" href="/categories" style="height: 200px; justify-content: center;">
+            <div style="background: #e0f2fe; color: #0284c7; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; transition: transform 0.2s;">
+                <i class="bi bi-grid-fill" style="font-size: 2rem;"></i>
+            </div>
+            <span style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Categories</span>
+            <span style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">Manage store structure</span>
+        </a>
+
+        <a class="big-box" href="/products" style="height: 200px; justify-content: center;">
+            <div style="background: #dcfce7; color: #16a34a; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; transition: transform 0.2s;">
+                <i class="bi bi-box-seam-fill" style="font-size: 2rem;"></i>
+            </div>
+            <span style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Products</span>
+            <span style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">Add or edit items</span>
+        </a>
+
+        <a class="big-box" href="/admin-order" style="height: 200px; justify-content: center;">
+            <div style="background: #ffedd5; color: #ea580c; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; transition: transform 0.2s;">
+                <i class="bi bi-cart-check-fill" style="font-size: 2rem;"></i>
+            </div>
+            <span style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Orders</span>
+            <span style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">View customer purchases</span>
+        </a>
+
+    </div>
+</div>

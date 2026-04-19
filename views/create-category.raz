@@ -1,0 +1,163 @@
+@{
+    Model.title = "Create Category";
+}
+@section nav {
+    Html.partial("_nav", {authenticated: true})
+}
+
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 5px;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+    }
+
+    /* Subcategory Section Header */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px dashed #e2e8f0;
+    }
+
+    .section-header h3 {
+        font-size: 1.1rem;
+        color: var(--text-main);
+        font-weight: 600;
+        margin: 0;
+    }
+
+    /* Add Button (Small & Green) */
+    .btn-add {
+        background-color: #dcfce7;
+        color: #16a34a;
+        border: 1px solid #bbf7d0;
+        width: 35px;
+        height: 35px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-add:hover {
+        background-color: #16a34a;
+        color: white;
+    }
+
+    /* Delete Button (Small & Red) */
+    .btn-del {
+        background-color: #fee2e2;
+        color: #ef4444;
+        border: 1px solid #fecaca;
+        width: 42px; /* Matches input height roughly */
+        height: 42px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-del:hover {
+        background-color: #ef4444;
+        color: white;
+    }
+
+    /* Grid for Subcategory Rows */
+    .fld1 {
+        display: grid;
+        grid-template-columns: 1fr 50px; /* Input takes space, button is fixed */
+        gap: 10px;
+        margin-bottom: 15px;
+        align-items: end; /* Aligns button to bottom of input */
+    }
+    
+    .fld1 label {
+        display: none; 
+    }
+</style>
+
+<div class="form-container">
+    <h1><i class="bi bi-folder-plus"></i> Category Entry</h1>
+    
+    @if(Model.msg && Model.msg.length > 0){
+        <div style="color: red; margin-bottom: 20px; text-align: center;">
+            @Model.msg
+        </div>
+    }
+
+    <form method="post" action="/save-category">
+        <div class="fld">
+            <label style="font-weight: 600; color: var(--secondary-color); display: block; margin-bottom: 8px;">Category Name</label>
+            <input type="text" name="cname" class="ctrl"  required style="padding: 12px;" />
+        </div>
+
+        <div class="section-header">
+            <h3>Subcategories</h3>
+            <button type="button" class="btn-add add" title="Add Subcategory">
+                <i class="bi bi-plus-lg"></i>
+            </button>
+        </div>
+
+        <div id="subs">
+            <div class="fld1">
+                <div>
+                    <label style="font-size: 0.85rem; font-weight: 600; color: #64748b; margin-bottom: 5px; display: block;">Name</label>
+                    <input type="text" name="sname" class="ctrl"  required style="padding: 10px;" />
+                </div>
+                <button type="button" class="btn-del del"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>
+        
+        <div class="fld" style="margin-top: 40px; text-align: right;">
+            <button type="submit" class="btn primary" style="padding: 12px 30px;">
+                <i class="bi bi-check2-circle"></i> Save Category
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="/scripts/jquery.js"></script>
+    <script>
+        $(()=>{
+            // Add Subcategory Row
+            $('.add').click(()=>{
+                // FIX: Building the string piece by piece prevents the Parser Error
+                var row = '<div class="fld1">';
+                row += '<input type="text" name="sname" class="ctrl" placeholder="Enter subcategory name" required style="padding: 10px;" />';
+                row += '<button type="button" class="btn-del del"><i class="bi bi-trash"></i></button>';
+                row += '</div>';
+                
+                $('#subs').append(row);
+            });
+
+            // Delete Subcategory Row
+            $(document).on("click", "button.del", function(){
+                if($('#subs .fld1').length > 1) {
+                    $(this).parent().remove();
+                } else {
+                    $(this).siblings('div').find('input').val('');
+                }
+            });
+        });
+    </script>
+}

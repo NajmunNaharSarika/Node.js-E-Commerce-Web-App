@@ -1,0 +1,117 @@
+@{
+    Model.title = "Home";
+    const carts = Model.carts;
+}
+@section nav {
+    Html.partial("_nav", {authenticated:Model.authenticated})
+}
+
+<div style="max-width: 1000px; margin: 30px auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+
+    <h2 style="margin-bottom: 20px; color: #0f172a; font-weight: 700;">Your Cart</h2>
+
+    <table class="tbl">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Unit Price</th>
+                <th style="width: 120px;">Quantity</th>
+                <th>Subtotal</th>
+                <th style="width: 80px;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(var i=0; i<carts.length; i++){
+            <tr>
+                <td style="font-weight: 500; color: #1e293b;">@carts[i].productname</td>
+                
+                <td>৳ @carts[i].price</td>
+                
+                <td>
+                    <input type="number" 
+                           data-cart="@carts[i]._id" 
+                           data-user="@carts[i].userid" 
+                           data-product="@carts[i].productid" 
+                           value="@carts[i].quantity" 
+                           class="ctrl qty" 
+                           style="width: 80px; padding: 5px 10px;" />
+                </td>
+                
+                <td style="font-weight: 600;">৳ @(carts[i].price * carts[i].quantity)</td>
+                
+                <td>
+                    <button data-cart="@carts[i]._id" class="small-btn" type="button" style="width: 100%;">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+        
+        <a href="/" style="text-decoration: none; color: #64748b; font-weight: 500;">
+            <i class="bi bi-arrow-left"></i> Continue Shopping
+        </a>
+        
+        <a href="/checkout" class="btn primary">
+            Check Out <i class="bi bi-arrow-right"></i>
+        </a>
+        
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="/scripts/snackbar/js-snackbar.min.css" />
+    <script src="/scripts/jquery.js"></script>
+    <script src="/scripts/snackbar/js-snackbar.js"></script>
+    <script>
+        $(()=>{
+            $(".qty").change(function(){
+                let uid=$(this).data('user');
+                let pid=$(this).data('product');
+                let cid=$(this).data('cart');
+                let q=$(this).val();
+                
+                // Get the price text (e.g., "৳ 500")
+                let priceText = $(this).parent().prev().text(); 
+                // Remove the "৳ " symbol and trim whitespace to get the number
+                let p = priceText.replace('৳', '').trim();
+                
+                // Calculate Subtotal
+                let subtotal = Number(q) * Number(p);
+
+                // Update Subtotal column with BDT symbol
+                $(this).parent().next().text('৳ ' + subtotal);
+
+               $.ajax({
+                method:'get',
+                url: `/update-cart?p=${pid}&q=${q}&u=${uid}&c=${cid}`,
+                dataType: 'json',
+                success: r=>{
+                    SnackBar({
+                            message: r.msg,
+                            position: "bm"
+                        })
+                }
+               })
+            });
+
+            $('.small-btn').click(function (){
+                let self = $(this);
+                let cid=$(this).data('cart');
+                $.ajax({
+                    method:'get',
+                    url:`/del-cart-item?c=${cid}`,
+                    dataType:'json',
+                    success: r=>{
+                        if(r.success == true){
+                            self.closest('tr').remove();
+                        }
+                    }
+                })
+            });
+        });
+    </script>
+}

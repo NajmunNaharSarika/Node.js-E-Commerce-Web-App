@@ -1,0 +1,179 @@
+@{
+    Model.title = "Checkout";
+}
+@section nav {
+    Html.partial("_nav", {authenticated:true})
+}
+
+<style>
+    /* Card Container */
+    .form-container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Header */
+    h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Input Labels */
+    label {
+        display: block;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    /* Textarea Styling */
+    textarea.ctrl {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: #1e293b;
+        background-color: #f8fafc;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    textarea.ctrl:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background-color: #ffffff;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Order Summary Box */
+    .summary-box {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+        color: #64748b;
+    }
+
+    .summary-row.total {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px dashed #cbd5e1;
+        font-size: 1.2rem;
+        color: var(--secondary-color);
+        font-weight: 700;
+    }
+
+    /* Payment Badge */
+    .badge-cod {
+        background-color: #dcfce7;
+        color: #166534;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* Shipping Info Alert */
+    .shipping-alert {
+        font-size: 0.85rem;
+        color: #0284c7;
+        background-color: #e0f2fe;
+        padding: 10px;
+        border-radius: 6px;
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Button */
+    .btn-checkout {
+        background-color: var(--primary-color);
+        color: white;
+        width: 100%;
+        padding: 14px;
+        border-radius: 8px;
+        border: none;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.1s, background-color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-checkout:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+    }
+</style>
+
+<div class="form-container">
+    <h1><i class="bi bi-bag-check-fill" style="color: var(--primary-color);"></i> Complete Order</h1>
+    
+    <form method="post" action="/create-order">
+        
+        <div class="summary-box">
+            <div class="summary-row">
+                <span>Payment Method</span>
+                <span class="badge-cod"><i class="bi bi-cash-stack"></i> Cash on Delivery</span>
+            </div>
+            
+            <div class="summary-row">
+                <span>Total Items</span>
+                <span style="font-weight: 600; color: var(--text-main);">@Model.count</span>
+            </div>
+
+            <div class="summary-row total">
+                <span>Total Amount</span>
+                <span style="color: var(--primary-color);">৳ @Model.amount</span>
+            </div>
+        </div>
+
+        <div class="fld" style="margin-bottom: 25px;">
+            <label>Delivery Address</label>
+            <textarea name="add" class="ctrl" placeholder="House No, Road No, Area, City..." required></textarea>
+            
+            <div class="shipping-alert">
+                <i class="bi bi-info-circle-fill"></i>
+                <span><strong>Shipping:</strong> Dhaka: 50 BDT, Outside: 150 BDT (Added on delivery)</span>
+            </div>
+        </div>
+        
+        <div class="fld">
+            <button type="submit" class="btn-checkout">
+                Confirm Order <i class="bi bi-arrow-right-circle"></i>
+            </button>
+        </div>
+    </form>
+</div>
